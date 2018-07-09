@@ -21,7 +21,7 @@ else
 fi
 
 # On Windows we need to regenerate the configure scripts.
-if [ -n "$VS_MAJOR" ] ; then
+if [ -n "$CYGWIN_PREFIX" ] ; then
     am_version=1.15 # keep sync'ed with meta.yaml
     export ACLOCAL=aclocal-$am_version
     export AUTOMAKE=automake-$am_version
@@ -29,9 +29,14 @@ if [ -n "$VS_MAJOR" ] ; then
         --force
         --install
         -I "$mprefix/share/aclocal"
-        -I "$mprefix/mingw-w64/share/aclocal" # note: this is correct for win32 also!
+        -I "$BUILD_PREFIX_M/Library/mingw-w64/share/aclocal"
     )
     autoreconf "${autoreconf_args[@]}"
+
+    # And we need to add the search path that lets libtool find the
+    # msys2 stub libraries for ws2_32.
+    platlibs=$(cd $(dirname $(gcc --print-prog-name=ld))/../lib && pwd -W)
+    export LDFLAGS="$LDFLAGS -L$platlibs"
 fi
 
 export PKG_CONFIG_LIBDIR=$uprefix/lib/pkgconfig:$uprefix/share/pkgconfig
@@ -43,7 +48,7 @@ configure_args=(
 )
 
 # Unix domain sockets aren't gonna work on Windows
-if [ -n "$VS_MAJOR" ] ; then
+if [ -n "$CYGWIN_PREFIX" ] ; then
     configure_args+=(--disable-unix-transport)
 fi
 
@@ -54,7 +59,7 @@ make check
 rm -rf $uprefix/share/man $uprefix/share/doc/${PKG_NAME#xorg-}
 
 # Non-Windows: prefer dynamic libraries to static, and dump libtool helper files
-if [ -z "VS_MAJOR" ] ; then
+if [ -z "$CYGWIN_PREFIX" ] ; then
     for lib_ident in Xmu Xmuu; do
         rm -f $uprefix/lib/lib${lib_ident}.la $uprefix/lib/lib${lib_ident}.a
     done
