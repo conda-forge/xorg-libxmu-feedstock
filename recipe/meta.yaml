@@ -26,6 +26,7 @@ requirements:
     - m2-automake{{ am_version }}  # [win]
     - m2-libtool  # [win]
     - m2w64-pkg-config  # [win]
+    - make
     - pkg-config  # [not win]
     - posix  # [win]
     - {{ compiler('c') }}        # [unix]
