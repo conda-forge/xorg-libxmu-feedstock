@@ -1,5 +1,6 @@
 #! /bin/bash
 # Get an updated config.sub and config.guess
+chmod +w ./config.*
 cp $BUILD_PREFIX/share/gnuconfig/config.* .
 
 set -e
