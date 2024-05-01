@@ -32,6 +32,7 @@ requirements:
     - pkg-config  # [not win]
     - posix  # [win]
     - gnuconfig  # [unix]
+    - {{ stdlib('c') }}
     - {{ compiler('c') }}        # [unix]
     - {{ compiler('m2w64_c') }}  # [win]
   host:
