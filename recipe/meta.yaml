@@ -3,7 +3,7 @@
 {% set name = "xorg-" ~ xorg_name %}
 {% set version = "1.2.1" %}
 {% set sha256 = "bf0902583dd1123856c11e0a5085bd3c6e9886fbbd44954464975fd7d52eb599" %}
-{% set am_version = "1.15" %} # keep synchronized with build.sh
+{% set am_version = "1.16" %} # keep synchronized with build.sh
 
 package:
   name: {{ name|lower }}
