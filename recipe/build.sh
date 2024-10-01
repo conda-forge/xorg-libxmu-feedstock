@@ -65,4 +65,4 @@ if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR}
     make check
 fi
 
-rm -rf $uprefix/share/man $uprefix/share/doc/${PKG_NAME#xorg-}
+rm -rf $uprefix/share/man $uprefix/share/doc/libXmu
