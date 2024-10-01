@@ -3,7 +3,7 @@
 {% set name = "xorg-" ~ xorg_name %}
 {% set version = "1.2.1" %}
 {% set sha256 = "fcb27793248a39e5fcc5b9c4aec40cc0734b3ca76aac3d7d1c264e7f7e14e8b2" %}
-{% set am_version = "1.15" %} # keep synchronized with build.sh
+{% set am_version = "1.16" %} # keep synchronized with build.sh
 
 package:
   name: {{ name|lower }}
@@ -17,7 +17,6 @@ source:
 
 build:
   number: 0
-  detect_binary_files_with_prefix: true
   run_exports:
     - {{ pin_subpackage(name|lower) }}
 
@@ -32,10 +31,10 @@ requirements:
     - m2-base                      # [win]
     - make                         # [unix]
     - m2-make                      # [win]
-    - {{ compiler('c') }}          # [unix]
-    - {{ stdlib('c') }}            # [unix]
-    - {{ compiler('m2w64_c') }}    # [win]
-    - {{ stdlib('m2w64_c') }}      # [win]
+    - {{ compiler("c") }}          # [unix]
+    - {{ stdlib("c") }}            # [unix]
+    - {{ compiler("m2w64_c") }}    # [win]
+    - {{ stdlib("m2w64_c") }}      # [win]
   host:
     - pthread-stubs
     - xorg-xorgproto
