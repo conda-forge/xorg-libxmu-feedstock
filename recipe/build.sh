@@ -49,7 +49,6 @@ if [ -n "$CYGWIN_PREFIX" ] ; then
 
     # Unix domain sockets aren't gonna work on Windows
     configure_args+=(--disable-unix-transport)
-fi
 else
     # Get an updated config.sub and config.guess
     cp $BUILD_PREFIX/share/gnuconfig/config.* .
