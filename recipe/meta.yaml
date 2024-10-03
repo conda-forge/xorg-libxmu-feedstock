@@ -16,7 +16,7 @@ source:
     - windows.patch  # [win]
 
 build:
-  number: 0
+  number: 1
   run_exports:
     - {{ pin_subpackage(name|lower) }}
 
@@ -35,16 +35,18 @@ requirements:
     - {{ stdlib("c") }}            # [unix]
     - {{ compiler("m2w64_c") }}    # [win]
     - {{ stdlib("m2w64_c") }}      # [win]
+    - autoconf                     # [unix]
+    - automake                     # [unix]
+    - gettext                      # [unix]
+    - libtool                      # [unix]
   host:
     - pthread-stubs
     - xorg-xorgproto
-    - xorg-libx11 >=1.6,<2
-    # Additional constraintless xorg-libx11 dep below is for conda-build to add potential pinning to.
     - xorg-libx11
-    - xorg-libxext 1.3.*
-    - xorg-libxt >=1.1
-    - xorg-util-macros
+    - xorg-libxext
+    - xorg-libxt
     - xorg-xtrans
+    - xorg-util-macros
 
 test:
   commands:
