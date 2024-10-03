@@ -34,7 +34,6 @@ if [ -n "$CYGWIN_PREFIX" ] ; then
     export AUTOMAKE=automake-$am_version
     autoreconf_args=(
         --force
-        --verbose
         --install
         -I "$mprefix/share/aclocal"
         -I "$BUILD_PREFIX_M/Library/usr/share/aclocal"
@@ -46,13 +45,16 @@ if [ -n "$CYGWIN_PREFIX" ] ; then
     platlibs=$(cd $(dirname $($CC --print-prog-name=ld))/../sysroot/usr/lib && pwd -W)
     test -f $platlibs/libws2_32.a || { echo "error locating libws2_32" ; exit 1 ; }
     export LDFLAGS="$LDFLAGS -L$platlibs"
+
+    # Unix domain sockets aren't gonna work on Windows
+    configure_args+=(--disable-unix-transport)
+fi
 else
     # Get an updated config.sub and config.guess
     cp $BUILD_PREFIX/share/gnuconfig/config.* .
 
     autoreconf_args=(
         --force
-        --verbose
         --install
         -I "${PREFIX}/share/aclocal"
         -I "${BUILD_PREFIX}/share/aclocal"
@@ -74,4 +76,8 @@ fi
 make -j$CPU_COUNT
 make install
 
-rm -rf $uprefix/share/man $uprefix/share/doc/${PKG_NAME#xorg-}
+if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR}" != "" ]]; then
+    make check
+fi
+
+rm -rf $uprefix/share/man $uprefix/share/doc/libXmu
