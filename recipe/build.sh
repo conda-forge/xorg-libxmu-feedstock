@@ -34,6 +34,7 @@ if [ -n "$CYGWIN_PREFIX" ] ; then
     export AUTOMAKE=automake-$am_version
     autoreconf_args=(
         --force
+        --verbose
         --install
         -I "$mprefix/share/aclocal"
         -I "$BUILD_PREFIX_M/Library/usr/share/aclocal"
@@ -55,6 +56,7 @@ else
 
     autoreconf_args=(
         --force
+        --verbose
         --install
         -I "${PREFIX}/share/aclocal"
         -I "${BUILD_PREFIX}/share/aclocal"
@@ -80,4 +82,4 @@ if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR}
     make check
 fi
 
-rm -rf $uprefix/share/man $uprefix/share/doc/libXmu
+rm -rf $uprefix/share/man $uprefix/share/doc/${PKG_NAME#xorg-}
