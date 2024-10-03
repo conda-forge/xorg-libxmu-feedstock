@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 set -e
 
@@ -19,6 +19,14 @@ else
     uprefix="$PREFIX"
 fi
 
+configure_args=(
+    --prefix=$mprefix
+    --disable-static
+    --disable-dependency-tracking
+    --disable-selective-werror
+    --disable-silent-rules
+)
+
 # On Windows we need to regenerate the configure scripts.
 if [ -n "$CYGWIN_PREFIX" ] ; then
     am_version=1.16 # keep sync'ed with meta.yaml
@@ -26,6 +34,7 @@ if [ -n "$CYGWIN_PREFIX" ] ; then
     export AUTOMAKE=automake-$am_version
     autoreconf_args=(
         --force
+        --verbose
         --install
         -I "$mprefix/share/aclocal"
         -I "$BUILD_PREFIX_M/Library/usr/share/aclocal"
@@ -37,24 +46,31 @@ if [ -n "$CYGWIN_PREFIX" ] ; then
     platlibs=$(cd $(dirname $($CC --print-prog-name=ld))/../sysroot/usr/lib && pwd -W)
     test -f $platlibs/libws2_32.a || { echo "error locating libws2_32" ; exit 1 ; }
     export LDFLAGS="$LDFLAGS -L$platlibs"
+
+    # Unix domain sockets aren't gonna work on Windows
+    configure_args+=(--disable-unix-transport)
 else
     # Get an updated config.sub and config.guess
-    chmod +w ./config.*
     cp $BUILD_PREFIX/share/gnuconfig/config.* .
+
+    autoreconf_args=(
+        --force
+        --verbose
+        --install
+        -I "${PREFIX}/share/aclocal"
+        -I "${BUILD_PREFIX}/share/aclocal"
+    )
+    autoreconf "${autoreconf_args[@]}"
+
+    configure_args+=("--build=${BUILD}")
 fi
 
 export PKG_CONFIG_LIBDIR=$uprefix/lib/pkgconfig:$uprefix/share/pkgconfig
-configure_args=(
-    --prefix=$mprefix
-    --disable-static
-    --disable-dependency-tracking
-    --disable-selective-werror
-    --disable-silent-rules
-)
 
-# Unix domain sockets aren't gonna work on Windows
-if [ -n "$CYGWIN_PREFIX" ] ; then
-    configure_args+=(--disable-unix-transport)
+if [[ "${CONDA_BUILD_CROSS_COMPILATION}" == "1" ]] ; then
+    configure_args+=(
+        --enable-malloc0returnsnull
+    )
 fi
 
 ./configure "${configure_args[@]}"
@@ -65,4 +81,4 @@ if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR}
     make check
 fi
 
-rm -rf $uprefix/share/man $uprefix/share/doc/libXmu
+rm -rf $uprefix/share/man $uprefix/share/doc/${PKG_NAME#xorg-}

@@ -16,7 +16,7 @@ source:
     - windows.patch  # [win]
 
 build:
-  number: 0
+  number: 1
   run_exports:
     - {{ pin_subpackage(name|lower) }}
 
@@ -35,6 +35,10 @@ requirements:
     - {{ stdlib("c") }}            # [unix]
     - {{ compiler("m2w64_c") }}    # [win]
     - {{ stdlib("m2w64_c") }}      # [win]
+    - autoconf                     # [unix]
+    - automake                     # [unix]
+    - gettext                      # [unix]
+    - libtool                      # [unix]
   host:
     - pthread-stubs
     - xorg-xorgproto
